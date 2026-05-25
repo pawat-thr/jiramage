@@ -57,6 +57,9 @@ func (m Model) mainView() string {
 
 	// header
 	left := titleStyle.Render("  Jiramage Dashboard")
+	if m.projectLabel != "" {
+		left += "  " + lipgloss.NewStyle().Foreground(teal).Bold(true).Render("["+m.projectLabel+"]")
+	}
 	ts := m.myLastUpdated
 	if m.activeTab != tabMyTasks {
 		ts = m.teamLastUpdated
@@ -138,10 +141,16 @@ func (m Model) helpBar() string {
 		keyStyle.Render("↑↓")+dimStyle.Render(" navigate"),
 	)
 
+	hHint := dimStyle.Render(" show all")
+	if !m.hideCompleted {
+		hHint = dimStyle.Render(" active only")
+	}
+
 	switch m.activeTab {
 	case tabMyTasks:
 		parts = append(parts,
 			keyStyle.Render("enter")+dimStyle.Render(" open browser"),
+			keyStyle.Render("h")+hHint,
 			keyStyle.Render("f")+dimStyle.Render(" filter status"),
 			keyStyle.Render("/")+dimStyle.Render(" search"),
 			keyStyle.Render("t")+dimStyle.Render(" transition"),
@@ -150,6 +159,7 @@ func (m Model) helpBar() string {
 	case tabTeam:
 		parts = append(parts,
 			keyStyle.Render("enter")+dimStyle.Render(" open browser"),
+			keyStyle.Render("h")+hHint,
 			keyStyle.Render("f")+dimStyle.Render(" filter name"),
 			keyStyle.Render("s")+dimStyle.Render(" filter status"),
 			keyStyle.Render("/")+dimStyle.Render(" search"),
@@ -159,6 +169,7 @@ func (m Model) helpBar() string {
 	case tabDashboard:
 		parts = append(parts,
 			keyStyle.Render("enter")+dimStyle.Render(" view in team page"),
+			keyStyle.Render("h")+hHint,
 			keyStyle.Render("s")+dimStyle.Render(" filter status"),
 		)
 	}

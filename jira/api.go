@@ -37,9 +37,21 @@ func (c *JiraClient) searchAll(jql string, fields []string) ([]Issue, error) {
 	return all, nil
 }
 
+func (c *JiraClient) projectFilter() string {
+	keys := c.cfg.ProjectKeys
+	if len(keys) == 0 {
+		return ""
+	}
+	quoted := make([]string, len(keys))
+	for i, k := range keys {
+		quoted[i] = `"` + k + `"`
+	}
+	return fmt.Sprintf("project in (%s) AND ", strings.Join(quoted, ","))
+}
+
 func (c *JiraClient) GetMyIssues() ([]Issue, error) {
 	return c.searchAll(
-		"assignee = currentUser() ORDER BY key DESC",
+		c.projectFilter()+"assignee = currentUser() ORDER BY key DESC",
 		[]string{"summary", "status", "priority", "assignee"},
 	)
 }
@@ -53,7 +65,7 @@ func (c *JiraClient) GetTeamIssues() ([]Issue, error) {
 	for i, e := range emails {
 		quoted[i] = `"` + e + `"`
 	}
-	jql := fmt.Sprintf("assignee in (%s) ORDER BY key DESC", strings.Join(quoted, ","))
+	jql := fmt.Sprintf(c.projectFilter()+"assignee in (%s) ORDER BY key DESC", strings.Join(quoted, ","))
 	return c.searchAll(jql, []string{"summary", "status", "priority", "assignee"})
 }
 

@@ -19,8 +19,11 @@ func (m Model) teamView() string {
 	visible := m.teamFilteredIssues()
 	searchActive := m.state == stateTeamSearch
 
-	hasBadge := m.teamNameFilter != "" || m.teamStatusFilter != "" || m.teamSearchQuery != "" || searchActive
+	hasBadge := m.hideCompleted || m.teamNameFilter != "" || m.teamStatusFilter != "" || m.teamSearchQuery != "" || searchActive
 
+	if m.hideCompleted {
+		b.WriteString("  " + modeBadgeStyle.Render(" ● active only ") + "\n")
+	}
 	if m.teamNameFilter != "" || m.teamStatusFilter != "" {
 		var badges []string
 		if m.teamNameFilter != "" {

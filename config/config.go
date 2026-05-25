@@ -13,6 +13,7 @@ type Config struct {
 	Email           string
 	Token           string
 	TeamEmails      []string
+	ProjectKeys     []string
 	RefreshInterval time.Duration
 }
 
@@ -63,6 +64,14 @@ func LoadConfig() (*Config, error) {
 			e = strings.TrimSpace(e)
 			if e != "" {
 				cfg.TeamEmails = append(cfg.TeamEmails, e)
+			}
+		}
+	}
+	if raw := os.Getenv("JIRA_PROJECT"); raw != "" {
+		for _, k := range strings.Split(raw, ",") {
+			k = strings.TrimSpace(strings.ToUpper(k))
+			if k != "" {
+				cfg.ProjectKeys = append(cfg.ProjectKeys, k)
 			}
 		}
 	}

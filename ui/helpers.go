@@ -46,6 +46,9 @@ func (m Model) myFilteredIssues() []jira.Issue {
 	var out []jira.Issue
 	q := strings.ToLower(m.mySearchQuery)
 	for _, iss := range m.myIssues {
+		if m.hideCompleted && iss.Fields.Status.StatusCategory.Key == "done" {
+			continue
+		}
 		if m.myStatusFilter != "" && iss.Fields.Status.Name != m.myStatusFilter {
 			continue
 		}
@@ -61,6 +64,9 @@ func (m Model) teamFilteredIssues() []jira.Issue {
 	var out []jira.Issue
 	q := strings.ToLower(m.teamSearchQuery)
 	for _, iss := range m.teamIssues {
+		if m.hideCompleted && iss.Fields.Status.StatusCategory.Key == "done" {
+			continue
+		}
 		if m.teamNameFilter != "" {
 			name := "Unassigned"
 			if iss.Fields.Assignee != nil {

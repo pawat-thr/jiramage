@@ -10,7 +10,10 @@ func (m Model) myTasksView() string {
 	visible := m.myFilteredIssues()
 	searchActive := m.state == stateMySearch
 
-	hasBadge := m.myStatusFilter != "" || m.mySearchQuery != "" || searchActive
+	hasBadge := m.hideCompleted || m.myStatusFilter != "" || m.mySearchQuery != "" || searchActive
+	if m.hideCompleted {
+		b.WriteString("  " + modeBadgeStyle.Render(" ● active only ") + "\n")
+	}
 	if m.myStatusFilter != "" {
 		b.WriteString("  " + filterBadgeStyle.Render(" Status: "+m.myStatusFilter+" ") + "\n")
 	}

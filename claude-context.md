@@ -16,7 +16,7 @@ This file gives a new Claude instance full context about this project: what it i
 - **Binary output location**: `build/jiramage`
 - **Module name** (go.mod): `jira-dashboard` (legacy name, do NOT rename — it would break all imports)
 - **Go toolchain**: 1.26.2 (darwin/arm64) — `go.mod` declares `go 1.26`
-- **Version**: v0.1.0 (hardcoded in `ui/model.go` as `appVersion`)
+- **Version**: v0.1.1 (hardcoded in `ui/model.go` as `appVersion`)
 - **Credit**: "by MpLab" (hardcoded as `appCredit`)
 
 ---
@@ -207,7 +207,7 @@ Tabs (`tabView` iota): `tabMyTasks`, `tabTeam`, `tabDashboard`
 - Press `enter` or `space` to skip immediately
 - Displays ASCII block-letter logo spelling **JIRAMAGE** using Unicode box-drawing chars
 - Each letter (J, I, R, A, M, G, E) is a 6-row `[6]string` defined in `buildLogo()` char map
-- Below logo: subtitle, version (`v0.1.0`), credit (`by MpLab`), hint text
+- Below logo: subtitle, version (`v0.1.1`), credit (`by MpLab`), hint text
 - Vertically centered based on terminal height
 
 ### My Tasks (`ui/page_mytasks.go`)

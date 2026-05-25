@@ -13,7 +13,12 @@ type IssueFields struct {
 }
 
 type Status struct {
-	Name string `json:"name"`
+	Name           string         `json:"name"`
+	StatusCategory StatusCategory `json:"statusCategory"`
+}
+
+type StatusCategory struct {
+	Key string `json:"key"` // "new" | "indeterminate" | "done"
 }
 
 type Priority struct {

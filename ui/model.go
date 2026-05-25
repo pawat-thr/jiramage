@@ -16,7 +16,7 @@ type tabView int
 
 const (
 	appName    = "jiramage"
-	appVersion = "v0.1.0"
+	appVersion = "v0.1.1"
 	appCredit  = "by MpLab"
 )
 
@@ -36,7 +36,7 @@ const (
 )
 
 const (
-	tabMyTasks  tabView = iota
+	tabMyTasks tabView = iota
 	tabTeam
 	tabDashboard
 )
@@ -74,6 +74,10 @@ type Model struct {
 	mySearchQuery   string
 	teamSearchQuery string
 
+	// view mode
+	hideCompleted bool
+	projectLabel  string
+
 	// transitions
 	transitions      []jira.Transition
 	transitionCursor int
@@ -82,10 +86,10 @@ type Model struct {
 	refreshInterval time.Duration
 
 	// shared
-	err       error
-	spinner   spinner.Model
-	textInput textinput.Model
-	users     []jira.User
+	err        error
+	spinner    spinner.Model
+	textInput  textinput.Model
+	users      []jira.User
 	userCursor int
 	statusMsg  string
 	statusOK   bool
@@ -103,7 +107,7 @@ func NewModel(client *jira.JiraClient) Model {
 	ti.CharLimit = 80
 	ti.Width = 36
 
-	return Model{client: client, state: stateSplash, spinner: sp, textInput: ti, refreshInterval: client.RefreshInterval()}
+	return Model{client: client, state: stateSplash, spinner: sp, textInput: ti, refreshInterval: client.RefreshInterval(), hideCompleted: true, projectLabel: client.ProjectLabel()}
 }
 
 // NewErrorModel creates a model that shows a config error immediately on startup.

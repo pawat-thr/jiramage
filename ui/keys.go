@@ -45,6 +45,9 @@ func (m Model) handleMyTasksKey(key string) (Model, tea.Cmd) {
 		if len(visible) > 0 {
 			return m, fetchTransitions(m.client, visible[m.myCursor].Key)
 		}
+	case "h":
+		m.hideCompleted = !m.hideCompleted
+		m.myCursor = 0
 	case "r":
 		m.state = stateLoading
 		return m, tea.Batch(m.spinner.Tick, fetchMyIssues(m.client))
@@ -104,6 +107,9 @@ func (m Model) handleTeamKey(key string) (Model, tea.Cmd) {
 		if len(visible) > 0 {
 			return m, fetchTransitions(m.client, visible[m.teamCursor].Key)
 		}
+	case "h":
+		m.hideCompleted = !m.hideCompleted
+		m.teamCursor = 0
 	case "r":
 		m.teamLoading = true
 		return m, fetchTeamIssues(m.client)
@@ -139,6 +145,9 @@ func (m Model) handleDashboardKey(key string) (Model, tea.Cmd) {
 				break
 			}
 		}
+	case "h":
+		m.hideCompleted = !m.hideCompleted
+		m.dashboardCursor = 0
 	case "r":
 		m.teamLoading = true
 		return m, fetchTeamIssues(m.client)

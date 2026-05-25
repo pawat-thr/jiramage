@@ -41,6 +41,12 @@ var (
 				Bold(true).
 				Padding(0, 1)
 
+	modeBadgeStyle = lipgloss.NewStyle().
+				Background(teal).
+				Foreground(white).
+				Bold(true).
+				Padding(0, 1)
+
 	headerStyle = lipgloss.NewStyle().
 			Foreground(grey).
 			Underline(true)

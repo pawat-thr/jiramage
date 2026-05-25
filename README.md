@@ -2,7 +2,7 @@
 
 A terminal dashboard for Jira Cloud — browse your tasks, monitor your team's workload, and reassign issues without leaving the terminal.
 
-Built with [Bubbletea](https://github.com/charmbracelet/bubbletea) · Go · v0.1.0 · by MpLab
+Built with [Bubbletea](https://github.com/charmbracelet/bubbletea) · Go · v0.1.1 · by MpLab
 
 ---
 

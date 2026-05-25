@@ -32,6 +32,13 @@ func (c *JiraClient) RefreshInterval() time.Duration {
 	return c.cfg.RefreshInterval
 }
 
+func (c *JiraClient) ProjectLabel() string {
+	if len(c.cfg.ProjectKeys) == 0 {
+		return ""
+	}
+	return strings.Join(c.cfg.ProjectKeys, ",")
+}
+
 func (c *JiraClient) authHeader() string {
 	raw := c.cfg.Email + ":" + c.cfg.Token
 	return "Basic " + base64.StdEncoding.EncodeToString([]byte(raw))

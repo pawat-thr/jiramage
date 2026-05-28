@@ -39,6 +39,28 @@ func (c *JiraClient) ProjectLabel() string {
 	return strings.Join(c.cfg.ProjectKeys, ",")
 }
 
+func (c *JiraClient) LabelLabel() string {
+	return strings.Join(c.cfg.LabelKeys, ",")
+}
+
+func (c *JiraClient) HasLabels() bool {
+	return len(c.cfg.LabelKeys) > 0
+}
+
+func (c *JiraClient) FixedStatusName() string {
+	return c.cfg.FixedStatus
+}
+
+func (c *JiraClient) TeamFromDate() string {
+	return c.cfg.TeamFromDate
+}
+
+func (c *JiraClient) AllMembers() []string {
+	members := []string{c.cfg.Email}
+	members = append(members, c.cfg.TeamEmails...)
+	return members
+}
+
 func (c *JiraClient) authHeader() string {
 	raw := c.cfg.Email + ":" + c.cfg.Token
 	return "Basic " + base64.StdEncoding.EncodeToString([]byte(raw))

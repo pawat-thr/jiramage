@@ -117,6 +117,57 @@ func (m Model) handleTeamKey(key string) (Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m Model) handleFixedKey(key string) (Model, tea.Cmd) {
+	members := m.client.AllMembers()
+
+	if m.fixedDrill != "" {
+		issues := m.fixedByMember[m.fixedDrill]
+		switch key {
+		case "up", "k":
+			if m.fixedDrillCursor > 0 {
+				m.fixedDrillCursor--
+			}
+		case "down", "j":
+			if m.fixedDrillCursor < len(issues)-1 {
+				m.fixedDrillCursor++
+			}
+		case "enter":
+			if len(issues) > 0 {
+				openURL(issues[m.fixedDrillCursor].BrowseURL(m.client.BaseURL()))
+			}
+		case "esc":
+			m.fixedDrill = ""
+			m.fixedDrillCursor = 0
+		case "r":
+			m.fixedLoading = true
+			m.fixedDrill = ""
+			return m, fetchAllFixed(m.client)
+		}
+		return m, nil
+	}
+
+	total := len(members) + 1
+	switch key {
+	case "up", "k":
+		if m.fixedCursor > 0 {
+			m.fixedCursor--
+		}
+	case "down", "j":
+		if m.fixedCursor < total-1 {
+			m.fixedCursor++
+		}
+	case "enter":
+		if m.fixedCursor > 0 {
+			m.fixedDrill = members[m.fixedCursor-1]
+			m.fixedDrillCursor = 0
+		}
+	case "r":
+		m.fixedLoading = true
+		return m, fetchAllFixed(m.client)
+	}
+	return m, nil
+}
+
 func (m Model) handleDashboardKey(key string) (Model, tea.Cmd) {
 	total := len(m.teamNameOptions) + 1
 	switch key {

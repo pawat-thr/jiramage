@@ -56,6 +56,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, teamTimerCmd(m.refreshInterval)
 
+	case fixedIssuesMsg:
+		m.fixedByMember = msg.byMember
+		m.fixedLastUpdated = time.Now()
+		m.fixedLoaded = true
+		m.fixedLoading = false
+		return m, fixedTimerCmd(m.refreshInterval)
+
 	case transitionsMsg:
 		m.transitions = msg.transitions
 		m.transitionCursor = 0
@@ -99,8 +106,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case teamTickMsg:
 		return m, fetchTeamIssues(m.client)
 
+	case fixedTickMsg:
+		return m, fetchAllFixed(m.client)
+
 	case errMsg:
 		m.teamLoading = false
+		m.fixedLoading = false
 		if m.state == stateLoading {
 			m.state = stateError
 			m.err = msg.err
@@ -154,6 +165,13 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				return m, fetchTeamIssues(m.client)
 			}
 			return m, nil
+		case "4":
+			m.activeTab = tabFixed
+			if !m.fixedLoaded && !m.fixedLoading {
+				m.fixedLoading = true
+				return m, fetchAllFixed(m.client)
+			}
+			return m, nil
 		}
 		switch m.activeTab {
 		case tabMyTasks:
@@ -162,6 +180,8 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m.handleTeamKey(key)
 		case tabDashboard:
 			return m.handleDashboardKey(key)
+		case tabFixed:
+			return m.handleFixedKey(key)
 		}
 
 	case stateMyStatusFilter:

@@ -10,10 +10,12 @@ import (
 
 type issuesMsg struct{ issues []jira.Issue }
 type teamIssuesMsg struct{ issues []jira.Issue }
+type fixedIssuesMsg struct{ byMember map[string][]jira.Issue }
 type usersMsg struct{ users []jira.User }
 type assignedMsg struct{ issueKey string }
 type tickMsg time.Time
 type teamTickMsg time.Time
+type fixedTickMsg time.Time
 type splashDoneMsg struct{}
 type errMsg struct{ err error }
 type transitionsMsg struct {
@@ -86,6 +88,20 @@ func doTransition(c *jira.JiraClient, issueKey, transitionID string) tea.Cmd {
 		}
 		return transitionedMsg{issueKey}
 	}
+}
+
+func fetchAllFixed(c *jira.JiraClient) tea.Cmd {
+	return func() tea.Msg {
+		m, err := c.GetAllFixedIssues()
+		if err != nil {
+			return errMsg{err}
+		}
+		return fixedIssuesMsg{m}
+	}
+}
+
+func fixedTimerCmd(d time.Duration) tea.Cmd {
+	return tea.Tick(d, func(t time.Time) tea.Msg { return fixedTickMsg(t) })
 }
 
 func splashTimer() tea.Cmd {

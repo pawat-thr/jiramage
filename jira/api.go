@@ -37,6 +37,40 @@ func (c *JiraClient) searchAll(jql string, fields []string) ([]Issue, error) {
 	return all, nil
 }
 
+func (c *JiraClient) labelFilter() string {
+	keys := c.cfg.LabelKeys
+	if len(keys) == 0 {
+		return ""
+	}
+	quoted := make([]string, len(keys))
+	for i, k := range keys {
+		quoted[i] = `"` + k + `"`
+	}
+	return fmt.Sprintf("labels in (%s)", strings.Join(quoted, ","))
+}
+
+func (c *JiraClient) GetFixedIssues(email string) ([]Issue, error) {
+	lf := c.labelFilter()
+	if lf == "" {
+		return nil, nil
+	}
+	jql := fmt.Sprintf(`status changed to "%s" by "%s" AND %s ORDER BY key DESC`,
+		c.cfg.FixedStatus, email, lf)
+	return c.searchAll(jql, []string{"summary", "status", "assignee"})
+}
+
+func (c *JiraClient) GetAllFixedIssues() (map[string][]Issue, error) {
+	result := make(map[string][]Issue)
+	for _, email := range c.AllMembers() {
+		issues, err := c.GetFixedIssues(email)
+		if err != nil {
+			return nil, err
+		}
+		result[email] = issues
+	}
+	return result, nil
+}
+
 func (c *JiraClient) projectFilter() string {
 	keys := c.cfg.ProjectKeys
 	if len(keys) == 0 {
@@ -65,7 +99,8 @@ func (c *JiraClient) GetTeamIssues() ([]Issue, error) {
 	for i, e := range emails {
 		quoted[i] = `"` + e + `"`
 	}
-	jql := fmt.Sprintf(c.projectFilter()+"assignee in (%s) ORDER BY key DESC", strings.Join(quoted, ","))
+	jql := fmt.Sprintf(c.projectFilter()+"assignee in (%s) AND created >= %q ORDER BY key DESC",
+		strings.Join(quoted, ","), c.cfg.TeamFromDate)
 	return c.searchAll(jql, []string{"summary", "status", "priority", "assignee"})
 }
 

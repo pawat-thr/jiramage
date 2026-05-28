@@ -16,7 +16,7 @@ type tabView int
 
 const (
 	appName    = "jiramage"
-	appVersion = "v0.1.1"
+	appVersion = "v0.1.3"
 	appCredit  = "by MpLab"
 )
 
@@ -39,6 +39,7 @@ const (
 	tabMyTasks tabView = iota
 	tabTeam
 	tabDashboard
+	tabFixed
 )
 
 type Model struct {
@@ -69,6 +70,15 @@ type Model struct {
 
 	// page 3 – Dashboard
 	dashboardCursor int // 0 = All, 1..N = member index
+
+	// page 4 – Fixed
+	fixedByMember   map[string][]jira.Issue
+	fixedLoaded     bool
+	fixedLoading    bool
+	fixedCursor     int    // 0 = All, 1..N = member index
+	fixedDrill      string // empty = summary view, email = drill-down for that member
+	fixedDrillCursor int
+	fixedLastUpdated time.Time
 
 	// search
 	mySearchQuery   string
@@ -107,7 +117,16 @@ func NewModel(client *jira.JiraClient) Model {
 	ti.CharLimit = 80
 	ti.Width = 36
 
-	return Model{client: client, state: stateSplash, spinner: sp, textInput: ti, refreshInterval: client.RefreshInterval(), hideCompleted: true, projectLabel: client.ProjectLabel()}
+	return Model{
+		client:          client,
+		state:           stateSplash,
+		spinner:         sp,
+		textInput:       ti,
+		refreshInterval: client.RefreshInterval(),
+		hideCompleted:   true,
+		projectLabel:    client.ProjectLabel(),
+		fixedByMember:   make(map[string][]jira.Issue),
+	}
 }
 
 // NewErrorModel creates a model that shows a config error immediately on startup.

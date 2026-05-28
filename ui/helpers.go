@@ -115,7 +115,7 @@ func (m Model) listHeight(hasBadge bool) int {
 	if m.height == 0 {
 		return 20
 	}
-	fixed := 7
+	fixed := 8 // header + tab bar + blank + col header + sep + scroll + status + 2-line help bar
 	if hasBadge {
 		fixed += 2
 	}
@@ -140,6 +140,13 @@ func scrollWindow(cursor, total, maxVisible int) (start, end int) {
 		start = end - maxVisible
 	}
 	return start, end
+}
+
+func emailUsername(email string) string {
+	if i := strings.Index(email, "@"); i > 0 {
+		return email[:i]
+	}
+	return email
 }
 
 func shortName(name string) string {

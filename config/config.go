@@ -14,6 +14,9 @@ type Config struct {
 	Token           string
 	TeamEmails      []string
 	ProjectKeys     []string
+	LabelKeys       []string
+	FixedStatus     string
+	TeamFromDate    string
 	RefreshInterval time.Duration
 }
 
@@ -72,6 +75,22 @@ func LoadConfig() (*Config, error) {
 			k = strings.TrimSpace(strings.ToUpper(k))
 			if k != "" {
 				cfg.ProjectKeys = append(cfg.ProjectKeys, k)
+			}
+		}
+	}
+	cfg.FixedStatus = "SIT DEPLOYED"
+	if raw := os.Getenv("JIRA_FIXED_STATUS"); raw != "" {
+		cfg.FixedStatus = strings.TrimSpace(raw)
+	}
+	cfg.TeamFromDate = "2024-05-01"
+	if raw := os.Getenv("JIRA_TEAM_FROM"); raw != "" {
+		cfg.TeamFromDate = strings.TrimSpace(raw)
+	}
+	if raw := os.Getenv("JIRA_LABELS"); raw != "" {
+		for _, k := range strings.Split(raw, ",") {
+			k = strings.TrimSpace(k)
+			if k != "" {
+				cfg.LabelKeys = append(cfg.LabelKeys, k)
 			}
 		}
 	}

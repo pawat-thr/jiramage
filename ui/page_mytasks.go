@@ -36,15 +36,21 @@ func (m Model) myTasksView() string {
 		return b.String()
 	}
 
-	col1, col2, col3, col4 := 13, 44, 16, 11
-	b.WriteString(headerStyle.Render(fmt.Sprintf("  %-*s %-*s %-*s %-*s",
+	col1, col3, col4 := 13, 16, 11
+	col2 := m.width - col1 - col3 - col4 - 6
+	if col2 < 20 {
+		col2 = 20
+	}
+	sepW := col1 + col2 + col3 + col4 + 3
+	b.WriteString(dimStyle.Render(fmt.Sprintf("  %-*s %-*s %-*s %-*s",
 		col1, "KEY", col2, "SUMMARY", col3, "STATUS", col4, "PRIORITY")) + "\n")
+	b.WriteString("  " + dimStyle.Render(strings.Repeat("─", sepW)) + "\n")
 
 	extraH := 0
 	if searchActive {
 		extraH = 2
 	}
-	maxH := m.listHeight(hasBadge) - extraH
+	maxH := m.listHeight(hasBadge) - extraH - 1
 	if maxH < 3 {
 		maxH = 3
 	}

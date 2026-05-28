@@ -71,6 +71,8 @@ var (
 		"Done":               green,
 		"REJECTED":           red,
 		"READY TO TEST":      teal,
+		"SIT DEPLOYED":       orange,
+		"SIT TESTING":        teal,
 		"Tier 1 in progress": orange,
 		"TIER 2":             yellow,
 		"Need More Info":     yellow,
